@@ -52,7 +52,7 @@ router.put('/:id', validateUserId, validateUser, (req, res) => {
     })
 });
 
-router.delete('/:id', validateUserId, async (req, res, next) => {
+router.delete('/:id', validateUserId, async (req, res) => {
   try{
     await User.remove(req.params.id)
     res.json(req.user)
@@ -63,9 +63,15 @@ router.delete('/:id', validateUserId, async (req, res, next) => {
     }
 });
 
-router.get('/:id/posts', validateUserId, (req, res) => {
-  // RETURN THE ARRAY OF USER POSTS
-  // this needs a middleware to verify user id
+router.get('/:id/posts', validateUserId, async (req, res) => {
+  try{
+    const result = await User.getUserPosts(req.params.id)
+    res.json(result);
+  }catch (err) {
+      res.status(500).json({
+        message: 'Error',
+      })
+    }
 });
 
 router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
